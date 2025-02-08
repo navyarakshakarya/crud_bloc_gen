@@ -1,0 +1,14 @@
+targets:
+  $default:
+    builders:
+      crud_bloc_gen|crud_bloc_gen:
+        enabled: true
+
+builders:
+  crud_bloc_gen:
+    import: "package:crud_bloc_gen/src/builder.dart"
+    builder_factories: ["generateCrudBloc"]
+    build_extensions: { ".dart": [".crud_bloc_gen.part"] }
+    auto_apply: dependents
+    build_to: cache
+    applies_builders: ["source_gen|combining_builder"]

@@ -1,0 +1,20 @@
+name: crud_bloc_gen
+description: A package for generating CRUD BLoC code
+version: 1.0.0
+homepage: https://github.com/navyarakshakarya/crud_bloc_gen
+
+environment:
+  sdk: ">=2.12.0 <3.0.0"
+
+dependencies:
+  build: ^2.0.0
+  source_gen: ^1.0.0
+  analyzer: ^2.0.0
+  freezed_annotation: ^1.0.0
+  flutter_bloc: ^8.0.0
+  fpdart: ^0.3.0
+
+dev_dependencies:
+  build_runner: ^2.0.0
+  freezed: ^1.0.0
+  json_serializable: ^6.0.0
