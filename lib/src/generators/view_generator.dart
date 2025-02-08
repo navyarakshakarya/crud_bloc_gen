@@ -14,13 +14,17 @@ class ViewGenerator extends GeneratorForAnnotation<GenerateCrudView> {
     }
 
     final className = element.name;
+    final lowerName = className.toLowerCase();
 
-    return '''
+    // Group all imports at the top
+    final imports = '''
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '${className.toLowerCase()}_bloc.dart';
-import '${className.toLowerCase()}_cubit.dart';
+import '${lowerName}_bloc.dart';
+import '${lowerName}_cubit.dart';
+''';
 
+    final classDefinition = '''
 class ${className}Page extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -48,18 +52,18 @@ class ${className}Page extends StatelessWidget {
           builder: (context, state) {
             return state.when(
               initial: () => Center(child: CircularProgressIndicator()),
-              loaded: (${className.toLowerCase()}s) => ListView.builder(
-                itemCount: ${className.toLowerCase()}s.length,
+              loaded: (${lowerName}s) => ListView.builder(
+                itemCount: ${lowerName}s.length,
                 itemBuilder: (context, index) {
-                  final ${className.toLowerCase()} = ${className.toLowerCase()}s[index];
+                  final ${lowerName} = ${lowerName}s[index];
                   return ListTile(
-                    title: Text(${className.toLowerCase()}.name),
-                    subtitle: Text(${className.toLowerCase()}.id),
+                    title: Text(${lowerName}.name),
+                    subtitle: Text(${lowerName}.id),
                     trailing: IconButton(
                       icon: Icon(Icons.delete),
                       onPressed: () {
                         context.read<${className}Bloc>().add(
-                              ${className}Event.delete${className}(id: ${className.toLowerCase()}.id),
+                              ${className}Event.delete${className}(id: ${lowerName}.id),
                             );
                       },
                     ),
@@ -69,7 +73,7 @@ class ${className}Page extends StatelessWidget {
                   );
                 },
               ),
-              dataChanged: (_, __) => SizedBox(), // This state is handled in the listener
+              dataChanged: (_, __) => SizedBox(),
             );
           },
         ),
@@ -84,5 +88,7 @@ class ${className}Page extends StatelessWidget {
   }
 }
 ''';
+
+    return '$imports\n$classDefinition';
   }
 }

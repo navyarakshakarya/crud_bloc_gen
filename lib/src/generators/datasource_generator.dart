@@ -15,14 +15,18 @@ class DatasourceGenerator
     }
 
     final className = element.name;
+    final lowerName = className.toLowerCase();
 
-    return '''
+    // Group all imports at the top
+    final imports = '''
 import '../core/exception/exception.dart';
-import '../data/models/${className.toLowerCase()}_model.dart';
+import '../data/models/${lowerName}_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '${className.toLowerCase()}_remote_data_source.dart';
+import '${lowerName}_remote_data_source.dart';
+''';
 
+    final classDefinition = '''
 class ${className}RemoteDataSourceImpl implements ${className}RemoteDataSource {
   final SupabaseClient supabaseClient;
   const ${className}RemoteDataSourceImpl(this.supabaseClient);
@@ -36,11 +40,11 @@ class ${className}RemoteDataSourceImpl implements ${className}RemoteDataSource {
   }
 
   @override
-  Future<${className}Model> create${className}(${className}Model ${className.toLowerCase()}) {
+  Future<${className}Model> create${className}(${className}Model ${lowerName}) {
     return _run(() async {
       final response = await supabaseClient
-          .from('${className.toLowerCase()}s')
-          .insert(${className.toLowerCase()}.toJson())
+          .from('${lowerName}s')
+          .insert(${lowerName}.toJson())
           .select();
       if (response.isEmpty) {
         throw DatasourceError(message: '${className} creation failed');
@@ -53,7 +57,7 @@ class ${className}RemoteDataSourceImpl implements ${className}RemoteDataSource {
   Future<${className}Model> delete${className}(String id) {
     return _run(() async {
       final response =
-          await supabaseClient.from('${className.toLowerCase()}s').delete().eq('id', id).select();
+          await supabaseClient.from('${lowerName}s').delete().eq('id', id).select();
       if (response.isEmpty) {
         throw DatasourceError(message: '${className} deletion failed');
       }
@@ -65,7 +69,7 @@ class ${className}RemoteDataSourceImpl implements ${className}RemoteDataSource {
   Future<${className}Model> find${className}(String id) {
     return _run(() async {
       final response =
-          await supabaseClient.from('${className.toLowerCase()}s').select().eq('id', id);
+          await supabaseClient.from('${lowerName}s').select().eq('id', id);
       if (response.isEmpty) {
         throw DatasourceError(message: '${className} not found');
       }
@@ -76,19 +80,19 @@ class ${className}RemoteDataSourceImpl implements ${className}RemoteDataSource {
   @override
   Future<List<${className}Model>> get${className}s() {
     return _run(() async {
-      final response = await supabaseClient.from('${className.toLowerCase()}s').select();
+      final response = await supabaseClient.from('${lowerName}s').select();
       return response.map((e) => ${className}Model.fromJson(e)).toList();
     });
   }
 
   @override
-  Future<${className}Model> update${className}(${className}Model ${className.toLowerCase()}) {
+  Future<${className}Model> update${className}(${className}Model ${lowerName}) {
     return _run(() async {
-      if (${className.toLowerCase()}.id != null) {
+      if (${lowerName}.id != null) {
         final response = await supabaseClient
-            .from('${className.toLowerCase()}s')
-            .update(${className.toLowerCase()}.toJson())
-            .eq('id', ${className.toLowerCase()}.id!)
+            .from('${lowerName}s')
+            .update(${lowerName}.toJson())
+            .eq('id', ${lowerName}.id!)
             .select();
         if (response.isEmpty) {
           throw DatasourceError(message: '${className} update failed');
@@ -100,5 +104,7 @@ class ${className}RemoteDataSourceImpl implements ${className}RemoteDataSource {
   }
 }
 ''';
+
+    return '$imports\n$classDefinition';
   }
 }

@@ -14,65 +14,71 @@ class UseCaseGenerator extends GeneratorForAnnotation<GenerateCrudUseCases> {
     }
 
     final className = element.name;
+    final lowerName = className.toLowerCase();
 
-    return '''
+    // Group all imports at the top
+    final imports = '''
 import 'package:fpdart/fpdart.dart';
 import '../core/exception/exception.dart';
 import '../core/usecase/usecase.dart';
-import '../data/models/${className.toLowerCase()}_model.dart';
-import '../domain/repositories/${className.toLowerCase()}_repository.dart';
+import '../data/models/${lowerName}_model.dart';
+import '../domain/repositories/${lowerName}_repository.dart';
+''';
 
+    final classDefinitions = '''
 class Find${className}UseCase implements UseCase<${className}Model, String> {
-  final ${className}Repository _${className.toLowerCase()}Repository;
-  Find${className}UseCase(this._${className.toLowerCase()}Repository);
+  final ${className}Repository _${lowerName}Repository;
+  Find${className}UseCase(this._${lowerName}Repository);
 
   @override
   Future<Either<APIException?, ${className}Model?>?> call(String? params) {
-    return _${className.toLowerCase()}Repository.find${className}(params);
+    return _${lowerName}Repository.find${className}(params);
   }
 }
 
 class Get${className}sUseCase implements UseCase<List<${className}Model>, NoParams> {
-  final ${className}Repository _${className.toLowerCase()}Repository;
-  Get${className}sUseCase(this._${className.toLowerCase()}Repository);
+  final ${className}Repository _${lowerName}Repository;
+  Get${className}sUseCase(this._${lowerName}Repository);
 
   @override
   Future<Either<APIException?, List<${className}Model>?>?> call(NoParams? params) {
-    return _${className.toLowerCase()}Repository.get${className}s();
+    return _${lowerName}Repository.get${className}s();
   }
 }
 
 class Create${className}UseCase implements UseCase<${className}Model, Create${className}UseCaseParams> {
-  final ${className}Repository _${className.toLowerCase()}Repository;
-  Create${className}UseCase(this._${className.toLowerCase()}Repository);
+  final ${className}Repository _${lowerName}Repository;
+  Create${className}UseCase(this._${lowerName}Repository);
 
   @override
   Future<Either<APIException?, ${className}Model?>?> call(Create${className}UseCaseParams? params) {
-    return _${className.toLowerCase()}Repository.create${className}(params!);
+    return _${lowerName}Repository.create${className}(params!);
   }
 }
 
 class Update${className}UseCase implements UseCase<${className}Model, Update${className}UseCaseParams> {
-  final ${className}Repository _${className.toLowerCase()}Repository;
-  Update${className}UseCase(this._${className.toLowerCase()}Repository);
+  final ${className}Repository _${lowerName}Repository;
+  Update${className}UseCase(this._${lowerName}Repository);
 
   @override
   Future<Either<APIException?, ${className}Model?>?> call(Update${className}UseCaseParams? params) {
-    return _${className.toLowerCase()}Repository.update${className}(params!);
+    return _${lowerName}Repository.update${className}(params!);
   }
 }
 
 class Delete${className}UseCase implements UseCase<${className}Model, String> {
-  final ${className}Repository _${className.toLowerCase()}Repository;
-  Delete${className}UseCase(this._${className.toLowerCase()}Repository);
+  final ${className}Repository _${lowerName}Repository;
+  Delete${className}UseCase(this._${lowerName}Repository);
 
   @override
   Future<Either<APIException?, ${className}Model?>?> call(String? params) {
-    return _${className.toLowerCase()}Repository.delete${className}(params);
+    return _${lowerName}Repository.delete${className}(params);
   }
 }
 
 // Add UseCase params classes here...
 ''';
+
+    return '$imports\n$classDefinitions';
   }
 }

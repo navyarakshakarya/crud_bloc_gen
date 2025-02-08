@@ -14,19 +14,23 @@ class ModelGenerator extends GeneratorForAnnotation<GenerateCrudModel> {
     }
 
     final className = element.name;
-    final fields = element.fields.where((f) => !f.isStatic);
+    final lowerName = className.toLowerCase();
 
+    // Group all imports at the top
+    final imports = '''
+import 'package:freezed_annotation/freezed_annotation.dart';
+
+part '${lowerName}_model.freezed.dart';
+part '${lowerName}_model.g.dart';
+''';
+
+    final fields = element.fields.where((f) => !f.isStatic);
     final fieldDeclarations =
         fields.map((f) => '    required ${f.type} ${f.name},').join('\n');
     final fieldAssignments =
         fields.map((f) => '        ${f.name}: ${f.name},').join('\n');
 
-    return '''
-import 'package:freezed_annotation/freezed_annotation.dart';
-
-part '${className.toLowerCase()}_model.freezed.dart';
-part '${className.toLowerCase()}_model.g.dart';
-
+    final classDefinition = '''
 @freezed
 class ${className}Model with _\$${className}Model {
   const ${className}Model._();
@@ -43,5 +47,7 @@ $fieldAssignments
       );
 }
 ''';
+
+    return '$imports\n$classDefinition';
   }
 }

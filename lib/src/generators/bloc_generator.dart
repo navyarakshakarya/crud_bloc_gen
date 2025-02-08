@@ -14,16 +14,20 @@ class BlocGenerator extends GeneratorForAnnotation<GenerateCrudBloc> {
     }
 
     final className = element.name;
+    final lowerName = className.toLowerCase();
 
-    return '''
+    // Group all imports at the top
+    final imports = '''
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import '../core/entities/${className.toLowerCase()}.dart';
+import '../core/entities/${lowerName}.dart';
 
-part '${className.toLowerCase()}_state.dart';
-part '${className.toLowerCase()}_event.dart';
-part '${className.toLowerCase()}_bloc.freezed.dart';
+part '${lowerName}_state.dart';
+part '${lowerName}_event.dart';
+part '${lowerName}_bloc.freezed.dart';
+''';
 
+    final classDefinition = '''
 class ${className}Bloc extends Bloc<${className}Event, ${className}State> {
   final Find${className}UseCase _find${className}UseCase;
   final Get${className}sUseCase _get${className}sUseCase;
@@ -58,5 +62,7 @@ class ${className}Bloc extends Bloc<${className}Event, ${className}State> {
   // Implement the event handlers here...
 }
 ''';
+
+    return '$imports\n$classDefinition';
   }
 }

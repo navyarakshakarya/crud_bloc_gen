@@ -15,14 +15,18 @@ class RepositoryGenerator
     }
 
     final className = element.name;
+    final lowerName = className.toLowerCase();
 
-    return '''
+    // Group all imports at the top
+    final imports = '''
 import 'package:fpdart/fpdart.dart';
 import '../core/exception/exception.dart';
-import '../data/models/${className.toLowerCase()}_model.dart';
-import '../domain/use_cases/create_${className.toLowerCase()}_usecase.dart';
-import '../domain/use_cases/update_${className.toLowerCase()}_usecase.dart';
+import '../data/models/${lowerName}_model.dart';
+import '../domain/use_cases/create_${lowerName}_usecase.dart';
+import '../domain/use_cases/update_${lowerName}_usecase.dart';
+''';
 
+    final classDefinition = '''
 abstract interface class ${className}Repository {
   Future<Either<APIException?, List<${className}Model>?>?> get${className}s();
   Future<Either<APIException?, ${className}Model?>?> find${className}(String? id);
@@ -70,5 +74,7 @@ class ${className}RepositoryImpl implements ${className}Repository {
   }
 }
 ''';
+
+    return '$imports\n$classDefinition';
   }
 }
